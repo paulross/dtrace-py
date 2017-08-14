@@ -1,6 +1,6 @@
-# Introduction
+# Dtrace and Python
 
-This is the description of a demonstration of using Dtrace with Python 3.6 suitable for a five minute lightning talk. You need an Apple Mac or another OS with Dtrace support.
+This is a demonstration of using Dtrace with Python 3.6 suitable for a five minute lightning talk. You need an Apple Mac or another OS with Dtrace support.
 
 The demonstration purports to be one by a hot new startup that creates personalised cat videos showing off it SRE skills by tracing a server in production, live!
 
@@ -20,7 +20,7 @@ python.exe -m venv ~/venvs/dtrace
 
 ## Setup
 
-Create three shells, all with a pwd of the directory this README.md is in.
+Create three shells, `cd` to the directory this README.md is in.
 
 In the first ('Python') shell, make it around 60 columns wide, activate dtrace Python3.6 and launch it, this will be used to run the python demo continuously:
 
@@ -37,7 +37,7 @@ In a third ('Presentation') shell make it 85 columns wide with the text as large
 
 Check that the changes of `d_demo/a_py_flowinfo.d` from a previous demo in function-entry and function-return are absent, the line `/copyinstr(arg1) == "new_cat_video"/` should not be in the functions `python*:::function-entry` and `python*:::function-return`:
 
-Check that the version of python you are running has probes:
+Check that the version of Python you are running has probes, I'm assuming PID 24601 here:
 
 ```
 $ sudo dtrace -l -P python24601
@@ -83,7 +83,7 @@ In the Python shell launch Python, then start the server with:
 >>> demo.go()
 ```
 
-You should see something like this, the PID is important for the nest step:
+You should see something like this, the PID is important for the next step:
 
 ![](images/DemoRunning.png)
 
@@ -112,7 +112,7 @@ On the right we have the following columns for each function call or return:
 5. Type of the probe, in all these cases it is func but garbage collection start/stop is also possible.
 6. Function, indented by stack depth.
 
-This even traces the standard library.
+This even traces the standard library of course.
 
 "I don't want the whole call stack, its too much, just give me the `new_cat_video()` function call."
 
@@ -139,17 +139,17 @@ You should see something like this:
 
 ## Function Counting
 
-The command:
+This aggregates the the function calls and the execution time. Use the command:
 
 ```
 $ sudo dtrace -s d_demo/b_py_calltime.d -p 24601
 ```
 
-Wait for a few seconds then hit Ctrl-C:
+Wait for a few seconds then hit `Ctrl-C` and you will see:
 
 ![](images/B_FunctionCount.png)
 
-This gives the count of function calls and the inclusive/exclusive time spent in them in microseconds.
+This gives the count of function calls and the inclusive and exclusive time spent in them in microseconds.
 
 "But all those numbers, can't we have pictures?"
 
@@ -161,11 +161,11 @@ With the command:
 $ sudo dtrace -s d_demo/c_py_calldist.d -p 24601
 ```
 
-You should see:
+You should see an ASCII histogram, note `demo.py, func, new_cat_video` second table from the bottom:
 
 ![](images/C_TimeHistogram.png)
 
-Then back to the presentation and finish that off.
+That is the demo over, now back to the presentation shell and finish that off.
 
 With a little practice this can all be done in less than 5 minutes.
 
