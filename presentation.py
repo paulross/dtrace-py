@@ -47,7 +47,7 @@ PRES = [
         '(if we got this far then the demo probably wasn\'t a complete disaster)',
         '',
         '',
-        'https://github.com/paulross/dtrace_demo',
+        'https://github.com/paulross/dtrace-py',
     ],
 ]
 
@@ -74,9 +74,7 @@ def main():
             if slide > 0:
                 slide -= 1
         elif user == 'r':
-            c, r = shutil.get_terminal_size()
             cls(r)
-            pass
         else:
             slide += 1
             if slide >= len(PRES):

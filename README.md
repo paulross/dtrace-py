@@ -1,8 +1,8 @@
 # Introduction
 
-This is the description of a demonstration of using Dtrace with Python 3.6 suitable for a lightning talk of 5 mins. You need an Apple Mac or another OS with Dtrace support.
+This is the description of a demonstration of using Dtrace with Python 3.6 suitable for a five minute lightning talk. You need an Apple Mac or another OS with Dtrace support.
 
-The demonstration purports to be a hot new startup that creates personalised cat videos showing off it SRE skills by tracing a server in production, live!
+The demonstration purports to be one by a hot new startup that creates personalised cat videos showing off it SRE skills by tracing a server in production, live!
 
 # Preparation
 
@@ -79,11 +79,17 @@ In the dtrace shell bring up the `demo.py` code:
 In the Python shell launch Python, then start the server with:
 
 ```
-import demo
-demo.go()
+>>> import demo
+>>> demo.go()
 ```
 
-Each `*` represents part of the search and each `+` represents a cat video being personalised. Now we want to trace what is going on.
+You should see something like this, the PID is important for the nest step:
+
+![](images/DemoRunning.png)
+
+Each `*` represents part of the search and each `+` represents a cat video being personalised.
+
+While this is running we want to trace what is going on.
 
 ## Tracing All Python Function Calls
 
@@ -92,17 +98,18 @@ In the dtrace shell:
 ```
 $ sudo dtrace -s d_demo/a_py_flowinfo.d -p 24601
 ```
-And you should see something like this:
+
+`Ctrl-C` to stop, you should see something like this:
 
 ![](images/A_TracingFunctions.png)
 
-On the right we have the following columns:
+On the right we have the following columns for each function call or return:
 
 1. Core number.
 2. PID.
-3. Delta time in microseconds.
-4. File and line number.
-5. Type of the probe.
+3. Delta time in microseconds from previous line.
+4. Source file and line number.
+5. Type of the probe, in all these cases it is func but garbage collection start/stop is also possible.
 6. Function, indented by stack depth.
 
 This even traces the standard library.
