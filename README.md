@@ -2,7 +2,9 @@
 
 This is a demonstration of using Dtrace with Python 3.6 suitable for a five minute lightning talk. You need an Apple Mac or another OS with Dtrace support.
 
-The demonstration purports to be one by a hot new startup that creates personalised cat videos showing off it SRE skills by tracing a server in production, live!
+The demonstration shows how dtrace can attach and profile running Python processes giving you live profiling and debugging information.
+
+The fiction surrounding this demonstration is of a hot new startup that creates personalised cat videos and it wants to demonstrate its SRE skills by tracing a server in production, live!
 
 # Preparation
 
@@ -73,8 +75,7 @@ In the dtrace shell bring up the `demo.py` code:
 
 "This is a demo of a hot new startup that will deliver to you every day a personalised cat video. It examines your social media profile and searches the web for just the right cat video for you. Of course this is just a MVP for angel investors.
 
-`go()` represents the server continuously running. It simulates serving 8 requests for cat videos by calling `find()` with a random number to represent the search depth. `find()` then calls `new_cat_video()` that randomly pauses to represent the hard work of personalising a cat video.
-"
+In the code above, `go()` represents the server continuously running. It simulates serving 8 requests for cat videos by calling `find()` with a random number to represent the search depth. `find()` then calls `new_cat_video()` that randomly pauses to represent the hard work of personalising a cat video. Its really just a simulation of our server at work."
 
 In the Python shell launch Python, then start the server with:
 
@@ -89,7 +90,7 @@ You should see something like this, the PID is important for the next step:
 
 Each `*` represents part of the search and each `+` represents a cat video being personalised.
 
-While this is running we want to trace what is going on.
+"Now one of our SRE's want to trace what is going on in the production server."
 
 ## Tracing All Python Function Calls
 
@@ -99,7 +100,7 @@ In the dtrace shell:
 $ sudo dtrace -s d_demo/a_py_flowinfo.d -p 24601
 ```
 
-`Ctrl-C` to stop, you should see something like this:
+You should see something like this [`Ctrl-C` to stop tracing]:
 
 ![](images/A_TracingFunctions.png)
 
@@ -118,13 +119,13 @@ This even traces the standard library of course.
 
 ## Tracing a Specific Function
 
-You can edit `d_demo/a_py_flowinfo.d` to show only the function `new_cat_video()` by copying line 53:
+You can edit `d_demo/a_py_flowinfo.d` to show only the function `new_cat_video()` by copying line 53 which is the predicate: `/copyinstr(arg1) == "new_cat_video"/`
 
 ```
 $ vi d_demo/a_py_flowinfo.d
 ```
 
-An inserting it as lines 75 and 86:
+And inserting this predicate as lines 75 and 86:
 
 ![](images/vi_edit.png)
 
@@ -161,7 +162,7 @@ With the command:
 $ sudo dtrace -s d_demo/c_py_calldist.d -p 24601
 ```
 
-You should see an ASCII histogram, note `demo.py, func, new_cat_video` second table from the bottom:
+You should see an ASCII histogram, note `demo.py, func, new_cat_video`, the second table from the bottom:
 
 ![](images/C_TimeHistogram.png)
 
