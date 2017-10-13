@@ -11,7 +11,7 @@ import shutil
 
 PRES = [
     [
-        'Tracing in Production',
+        'Dynamic Tracing With Python',
         '',
         'by Paul Ross',
     ],
