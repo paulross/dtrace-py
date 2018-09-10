@@ -10,7 +10,7 @@ def go():
         for i in range(random.randint(4, 8)):
             find(random.randint(1, 12))
             print()
-        print('%s Waiting for cat video requests...' % os.getpid())
+        print('PID %s waiting for cat video requests...' % os.getpid())
         time.sleep(2)
 
 def find(n):
