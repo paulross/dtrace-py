@@ -1,6 +1,6 @@
 # Dtrace and Python
 
-This is a demonstration of using Dtrace with Python 3.6 suitable for a five minute lightning talk. You need an Apple Mac or another OS with Dtrace support.
+This is a demonstration of using Dtrace with Python 3.6/3.7 suitable for a five minute lightning talk. You need an Apple Mac or another OS with Dtrace support.
 
 The demonstration shows how dtrace can attach and profile running Python processes giving you live profiling and debugging information.
 
@@ -12,13 +12,26 @@ Create a dtrace version of Python and a virtual environment in `~/venvs` directo
 
 ```
 cd ~/tmp
-curl -o Python-3.6.2.tgz https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz
-tar -xzf Python-3.6.2.tgz
-cd Python-3.6.2
+curl -o Python-3.7.0.tgz https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
+tar -xzf Python-3.7.0.tgz
+cd Python-3.7.0
 ./configure --with-dtrace
 make
 python.exe -m venv ~/venvs/dtrace
 ```
+
+If you want to show off Py-Spy then install it:
+
+```
+(dtrace36)
+paulross@Pauls-MBP-1  ~/dtrace-py (master)
+$ pip install py-spy
+Collecting py-spy
+  Using cached https://files.pythonhosted.org/packages/67/77/57fbee60cb6870894a9436a80ba5e19bd46cc7d040615e5ab07863d1726a/py_spy-0.1.5-py2.py3-none-macosx_10_7_x86_64.whl
+Installing collected packages: py-spy
+Successfully installed py-spy-0.1.5
+```
+
 
 ## Setup
 
@@ -170,11 +183,41 @@ That is the demo over, now back to the presentation shell and finish that off.
 
 With a little practice this can all be done in less than 5 minutes.
 
+# Py-Spy
+
+If you are quick you might be able to demonstrate Py-Spy.
+
+[Py-Spy](https://github.com/benfred/py-spy) is a sampling profiler for Python programs.
+It lets you visualize what your Python program is spending time on without restarting the program or modifying the code in any way.
+Py-Spy is extremely low overhead: it is written in Rust for speed and doesn't run in the same process as the profiled Python program, nor does it interrupt the running program in any way.
+This means Py-Spy is safe to use against production Python code.
+
+Py-Spy works on Linux, OSX and Windows, and supports profiling all recent versions of the CPython interpreter (versions 2.3-2.7 and 3.3-3.6).
+
+Here is Py-Spy sampling our which is running this time as PID 6871:
+```
+$ sudo py-spy -p 6871
+```
+
+![Py-Spy top](images/PySpyTop.png)
+
+And the interactive SVG flame graph obtained by:
+
+```
+$ sudo py-spy -p 6871 -f images/PySpyFlame.svg
+```
+
+![Py-Spy Flame graph](images/PySpyFlame.svg)
+
+
 # Further Resources
 
 * Dtrace on [Wikipedia](http://en.wikipedia.org/wiki/DTrace)
 * The Dtrace [website](http://dtrace.org/blogs/).
 * Brendan Gregg on [Dtrace](http://www.brendangregg.com/dtrace.html) and the [Dtrace toolkit](http://www.brendangregg.com/dtracetoolkit.html).
 * Brendan on [eBPF](http://www.brendangregg.com/ebpf.html), the Linux equivalent ot Dtrace.
+* Py-Spy [home page](https://github.com/benfred/py-spy)
 
 In this repo you will find a other Dtrace `*.d` files for Python in the `toolkit/` directory.
+
+

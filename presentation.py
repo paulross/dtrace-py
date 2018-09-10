@@ -7,49 +7,58 @@ b<cr> - Previous slide.
 q<cr> - Quit
 r<cr> - Refresh display (useful after resizing the command line). 
 """
+import collections
 import shutil
 
-PRES = [
-    [
+HELP_TEXT = """<cr>  - Next slide.
+b<cr> - Previous slide.
+q<cr> - Quit
+r<cr> - Refresh display (useful after resizing the command line). 
+?<cr> - This help text.
+"""
+
+# -1 left aligned, 0 centred, 1 right aligned
+TextAlign = collections.namedtuple('TextAlign', 'text, align')
+
+PRES = (
+    TextAlign((
         'Dynamic Tracing With Python',
         '',
         'by Paul Ross',
-    ],
-    [
-        'Python 3.6 has dtrace support!',
-    ],
-    [
-        'Building Python 3.6 with dtrace support',
+        '',
+        'All of this is on GitHub!', 
+    ), 0),
+    TextAlign((
+        'Python 3.6/3.7 has dtrace support!',
+    ), 0),
+    TextAlign((
+        'Building Python 3.7 with dtrace support',
         '---------------------------------------',
         '',
-        'cd ~/tmp                                                                         ',
-        'curl -o Python-3.6.2.tgz https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz',
-        'tar -xzf Python-3.6.2.tgz                                                        ',
-        'cd Python-3.6.2                                                                  ',
-        './configure --with-dtrace                                                        ',
-        'make                                                                             ',
-        'python.exe -m venv ~/venvs/dtrace                                                ',
-        '. ~/venvs/dtrace/bin/activate                                                    ',
-    ],
-    [
+        'cd ~/tmp',
+        'curl -o Python-3.7.0.tgz \\',
+        '    https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz',
+        'tar -xzf Python-3.7.0.tgz',
+        'cd Python-3.7.0',
+        './configure --with-dtrace',
+        'make',
+        'python.exe -m venv ~/venvs/dtrace',
+        '. ~/venvs/dtrace/bin/activate',
+    ), -1),
+    TextAlign((
         'Live demo!',
-    ],
-    [
-        'What about Linux?',
-        '',
-        'stap - system tap.',
-        'The good news: eBPF - Linux 4.x kernels',
-    ],
-    [
+    ), 0),
+    TextAlign((
         'Thanks!',
         '',
         '',
-        '(if we got this far then the demo probably wasn\'t a complete disaster)',
+        '(if we got this far then the demo',
+        'probably wasn\'t a complete disaster!)',
         '',
         '',
         'https://github.com/paulross/dtrace-py',
-    ],
-]
+    ), 0),
+)
 
 def cls(r):
     for i in range(r):
@@ -59,11 +68,19 @@ def main():
     slide = 0
     while True:
         c, r = shutil.get_terminal_size()
-        rows = len(PRES[slide])
+        text, align = PRES[slide]
+        rows = len(text)
         for i in range((r - rows) // 2):
             print()
-        for line in PRES[slide]:
-            print(line.center(c))
+        for line in text:
+            if align == -1:
+                print(line)
+            elif align == 0:
+                print(line.center(c))
+            elif align == 1:
+                print(' ' * (r - rows) + line)
+            else:
+                assert 0
         for i in range((r - rows) // 2):
             print()
         user = input('')
@@ -74,6 +91,11 @@ def main():
             if slide > 0:
                 slide -= 1
         elif user == 'r':
+            cls(r)
+        elif user == '?':
+            cls(r)
+            print(HELP_TEXT)
+            user = input('<cr> to continue...')
             cls(r)
         else:
             slide += 1

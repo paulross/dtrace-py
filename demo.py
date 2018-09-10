@@ -7,10 +7,10 @@ def go():
     """Demo of the server running."""
     print('PID: %s' % os.getpid())
     while True:
-        for i in range(8):
+        for i in range(random.randint(4, 8)):
             find(random.randint(1, 12))
             print()
-        print('%s Waiting...' % os.getpid())
+        print('%s Waiting for cat video requests...' % os.getpid())
         time.sleep(2)
 
 def find(n):
